@@ -4,10 +4,14 @@
 ![skills](https://img.shields.io/badge/skills-9-green)
 ![rules](https://img.shields.io/badge/规范库-53%20条-orange)
 ![scope](https://img.shields.io/badge/学科-管理科学与工程-lightgrey)
+![format](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)
+![deps](https://img.shields.io/badge/校验脚本-零依赖-success)
 
 面向**管理科学与工程**学科（本科高年级 / MBA）的中文教材编写流水线。9 个 skill 把「拆样本 → 课标映射 → 大纲 → 正文 → 练习/素材 → 审校 → 排版」固化成一条可执行、可检查的流程，每一步都有确定的输入、确定的产物，以及一个能跑出结论的自检脚本。
 
 写教材真正的麻烦不是「写不出来」，而是**写出来的东西不像一本教材**：篇幅凭感觉、练习和正文对不上、审校靠通读一遍说「感觉还行」。这套 skill 的做法是把这些判断变成可核对的事实——字数按区间卡、每题必须挂学习目标、审校先跑脚本再过人眼。
+
+**不绑定某一个客户端。** 内容就是 Markdown 规则 + 纯 Python 脚本：遵循 [Agent Skills](https://skill.md) 开放标准的客户端（Claude Code、Cursor、Codex、WorkBuddy 等）可直接加载；不支持的客户端也能用——把仓库放进项目、在 `AGENTS.md` 里指个路即可；**完全不用 AI 也能跑**，四个校验脚本是零依赖的命令行工具。
 
 > ⚠️ **使用前请读第七节。** 本项目的规范库未经学科专家签字，人工盲评经项目负责人决定豁免。产出只能作内部起草，不得对外称「已审定教材」。
 
@@ -15,34 +19,85 @@
 
 ## 一、快速开始
 
-### 安装
+### 1.1 装上
 
-把 `skills/` 下 9 个目录放进 WorkBuddy 的用户级 skills 目录，所有项目可用：
+Agent Skills 的约定是「一个 skill 一个目录，目录里必须有 `SKILL.md`」。不同客户端只是扫描的目录不同，**内容完全一样**，所以装一次可以喂给多个工具。
+
+| 客户端 | 个人级（所有项目可用） | 项目级（仅当前项目） |
+|---|---|---|
+| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
+| Cursor | 建议用项目级 | `.cursor/skills/` 或 `.agents/skills/`（也会读 `.claude/skills/`） |
+| Codex | 建议用项目级 | `.agents/skills/` |
+| WorkBuddy | `~/.workbuddy/skills/` | `.workbuddy/skills/` |
+
+**推荐做法：只留一份真身，其余用链接。** 这套东西最大的维护坑是「规则副本不同步」——9 个 skill 各自带着 `references/` 副本，多装几份就等于多几个漂移点。
 
 ```bash
-# 方式一：用 Release 里的交付包（推荐）
+# 取一份真身
+git clone https://github.com/hcming2026/textbook-writing-skills.git ~/src/textbook-skills
+# 或从 Release 下交付包
 curl -LO https://github.com/hcming2026/textbook-writing-skills/releases/download/v1.1.2/textbook-skills-v1.1.2.zip
-unzip textbook-skills-v1.1.2.zip -d /tmp/tbs
-cp -r /tmp/tbs/skills/* ~/.workbuddy/skills/
 
-# 方式二：直接 clone
-git clone https://github.com/hcming2026/textbook-writing-skills.git
-cp -r textbook-writing-skills/skills/* ~/.workbuddy/skills/
+# 建个人级目录，把 9 个 skill 逐个链过去（macOS / Linux）
+mkdir -p ~/.claude/skills
+for d in ~/src/textbook-skills/skills/*/; do ln -sfn "$d" ~/.claude/skills/; done
 ```
 
-Windows 用户把 `~/.workbuddy/skills/` 换成 `C:\Users\<你的用户名>\.workbuddy\skills\`。
+Windows 用**目录联接**（实测：联接不需要管理员权限，符号链接需要，所以不要用 `ln -s` 代替）：
 
-### 验证安装
+```powershell
+$src = "C:\src\textbook-skills\skills"
+Get-ChildItem $src -Directory | ForEach-Object {
+  New-Item -ItemType Junction -Path "$env:USERPROFILE\.workbuddy\skills\$($_.Name)" -Target $_.FullName
+}
+```
+
+> 不要用 `cmd` 的 `for /d %d in ("路径\*")`——给通配符集合加引号会关掉通配符展开，循环一个目录都拿不到；不加引号又扛不住路径里的空格。PowerShell 这版两种毛病都没有。
+
+不想折腾链接就整目录拷贝，代价是以后改规则要重新拷、容易漏：
 
 ```bash
-python ~/.workbuddy/skills/unit-writer/scripts/check_draft.py \
-       ~/.workbuddy/skills/unit-writer/assets/范文-u2-l3.md
+cp -r skills/* <目标目录>/
+```
+
+**客户端不认 `SKILL.md` 怎么办。** 内容照样能用，只是要手动指路。在项目根的 `AGENTS.md`（Cursor、Codex 都读；Claude Code 在没有 `CLAUDE.md` 时也读）里加三行：
+
+```markdown
+教材编写按 skills/textbook-builder/SKILL.md 的流程走。
+各环节规则见 规范库/（53 条，TY/YY/XD/LX/SJ 编号）。
+正文写完必须跑 skills/unit-writer/scripts/check_draft.py，有 ERROR 不得交付。
+```
+
+模型读到路径会自己去读文件，不需要把规则贴进上下文——这也是这套东西能跨客户端的原因：它依赖的是「文件可读」，不是「某个产品的功能」。
+
+### 1.2 不用 AI 也能用
+
+四个校验脚本只依赖 Python 标准库（3.8+，无第三方包），可以当普通命令行工具用：
+
+```bash
+python skills/unit-writer/scripts/check_draft.py 我的稿件.md
+python skills/outline-designer/scripts/check_outline.py 我的大纲.md
+python skills/curriculum-mapper/scripts/check_lo.py LO表.csv
+python skills/exercise-designer/scripts/check_exercise.py 习题.md --level=MBA
+```
+
+唯一有外部依赖的是 `textbook-analyzer/scripts/render_pages.py`（扫版 PDF 需要 `pip install pymupdf` 才能渲染）。
+
+规则本身也是可读的：`规范库/` 里 53 条规则就是给人看的，不装任何工具、不看任何代码，照着写也行。
+
+### 1.3 验证装对了
+
+```bash
+# 把 $SKILLS 换成一个真实存在的 skill 目录
+SKILLS=~/.claude/skills          # 或 ~/.workbuddy/skills
+python $SKILLS/unit-writer/scripts/check_draft.py \
+       $SKILLS/unit-writer/assets/范文-u2-l3.md
 # 期望输出：结果：0 个 ERROR，0 个 WARN
 ```
 
-跑出 `0 个 ERROR，0 个 WARN` 说明脚本与规则副本都装对了。若报「未识别到三层小标题」之类的结构错误，多半是文件没拷全。
+跑出 `0 个 ERROR，0 个 WARN` 说明脚本与规则副本都齐了。若报「未识别到三层小标题」之类的结构错误，多半是文件没拷全；若报 `No such file`，检查链接是否指到了目录本身而不是目录内容。
 
-### 用起来
+### 1.4 用起来
 
 不需要记 skill 名字，**照平常说话就行**，触发词命中后会自己路由：
 
