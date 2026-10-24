@@ -1,0 +1,10 @@
+# 统一换行与二进制判定，避免 Windows 检出后 diff 噪声
+* text=auto
+
+*.md    text
+*.py    text eol=lf
+*.csv   text eol=lf
+*.zip   binary
+*.docx  binary
+*.pdf   binary
+*.azw3  binary
