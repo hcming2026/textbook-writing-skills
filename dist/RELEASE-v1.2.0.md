@@ -54,12 +54,12 @@ python <SKILL_DIR>/scripts/check_draft.py 我的稿件.md
 
 ## 交付包
 
-80 个文件（skills 47 / docs 22 / 规范库 5 / meta 3 / tools 3），331,667 bytes。
+80 个文件（skills 47 / docs 22 / 规范库 5 / meta 3 / tools 3），332,916 bytes。
 
 ```bash
 # 校验下载完整性
 python -c "import hashlib;print(hashlib.sha256(open('textbook-skills-v1.2.0.zip','rb').read()).hexdigest())"
-# 期望：334a8a1ebe4d39bf358a38542b48ebf67016e8b5c8fafefcf4dcb6f6ec1aa4a9
+# 期望：62aed3ee4f9ca5ff7eb469bd8f15d2385c37da145da7c7e90e4ede80fdf76ba4
 ```
 
 ## 升级方式
