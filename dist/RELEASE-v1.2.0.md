@@ -54,14 +54,22 @@ python <SKILL_DIR>/scripts/check_draft.py 我的稿件.md
 
 ## 交付包
 
-80 个文件（skills 47 / docs 22 / 规范库 5 / meta 3 / tools 3），329,101 bytes。
+80 个文件（skills 47 / docs 22 / 规范库 5 / meta 3 / tools 3），331,667 bytes。
 
 ```bash
 # 校验下载完整性
 python -c "import hashlib;print(hashlib.sha256(open('textbook-skills-v1.2.0.zip','rb').read()).hexdigest())"
-# 期望：7e069a7f2ea4234bef77ea97356fd4a63f8b0c1b9236839020f4d954aee9315c
+# 期望：334a8a1ebe4d39bf358a38542b48ebf67016e8b5c8fafefcf4dcb6f6ec1aa4a9
 ```
 
 ## 升级方式
 
 覆盖 `skills/` 下 9 个目录即可，无需迁移数据。用链接安装的，`git pull` 后即生效——但**注意重跑一次** `python tools/consistency_check.py`，确认副本没有因为之前的同步回退。
+
+## 同系列其他版本
+
+v1.1.2 起七个版本都有 Release 和附件，完整索引见 [README 的「版本历史」](https://github.com/hcming2026/textbook-writing-skills#版本历史)。
+
+**除本版外都是历史版本**——v1.1.3–v1.1.7 都早于本版的三项 P0 修复，装上后脚本命令可能直接报 `No such file or directory`。
+
+> v1.1.3 的附件是重制包（70 文件 / 209,807 bytes）。原归档包 71 文件，其中一个 `docs/盲评包/_映射-密封勿发.md` 是盲评 A/B 组对应表，文件首行自述「不得发给评审教师」，打包时误入。重制只剔除该文件，其余 70 项逐字节未变。
