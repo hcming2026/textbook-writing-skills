@@ -251,7 +251,7 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 │   ├── 测试用例/             T-03 ~ T-06 与两份对照组
 │   └── 盲评包/               A/B 文件 + 评分表 + 密封映射表
 ├── tools/trigger_test.py     触发回归工具
-├── dist/                     交付包 zip（当前 v1.1.6，旧版在 archive/）
+├── dist/                     交付包 zip（当前 v1.1.7，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
