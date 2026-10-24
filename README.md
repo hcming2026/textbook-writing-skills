@@ -4,7 +4,7 @@
 
 ![skills](https://img.shields.io/badge/skills-9-green)
 
-![rules](https://img.shields.io/badge/规范库-58%20条-orange)
+![rules](https://img.shields.io/badge/规范库-62%20条-orange)
 
 ![scope](https://img.shields.io/badge/学科-管理科学与工程-lightgrey)
 
@@ -42,8 +42,6 @@ Agent Skills 的约定是「一个 skill 一个目录，目录里必须有 `SKIL
 ```bash
 # 取一份真身
 git clone https://github.com/hcming2026/textbook-writing-skills.git ~/src/textbook-skills
-# 或从 Release 下交付包
-curl -LO https://github.com/hcming2026/textbook-writing-skills/releases/download/v1.1.3/textbook-skills-v1.1.3.zip
 
 # 建个人级目录，把 9 个 skill 逐个链过去（macOS / Linux）
 mkdir -p ~/.claude/skills
@@ -71,7 +69,7 @@ cp -r skills/* <目标目录>/
 
 ```markdown
 教材编写按 skills/textbook-builder/SKILL.md 的流程走。
-各环节规则见 规范库/（58 条，TY/YY/XD/LX/SJ 编号）。
+各环节规则见 规范库/（62 条，TY/YY/XD/LX/SJ 编号）。
 正文写完必须跑 skills/unit-writer/scripts/check_draft.py，有 ERROR 不得交付。
 ```
 
@@ -90,7 +88,7 @@ python skills/exercise-designer/scripts/check_exercise.py 习题.md --level=MBA
 
 唯一有外部依赖的是 `textbook-analyzer/scripts/render_pages.py`（扫版 PDF 需要 `pip install pymupdf` 才能渲染）。
 
-规则本身也是可读的：`规范库/` 里 58 条规则就是给人看的，不装任何工具、不看任何代码，照着写也行。
+规则本身也是可读的：`规范库/` 里 62 条规则就是给人看的，不装任何工具、不看任何代码，照着写也行。
 
 ### 1.3 验证装对了
 
@@ -187,12 +185,12 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 ## 六、规范库
 
-`规范库/` 是规则母本，共 **58 条**，用编号前缀区分来源：
+`规范库/` 是规则母本，共 **62 条**，用编号前缀区分来源：
 
 | 文件        | 编号                | 条数 | 管什么                                       |
 | --------- | ----------------- | -- | ----------------------------------------- |
-| `体例规范.md` | `TY-01` … `TY-18` | 18 | 层级、编号、六栏体例、术语引注、章末收口、字数口径                 |
-| `语言风格.md` | `YY-01` … `YY-22` | 22 | 句式、人称、时态，附 5 类禁用词表（空转词／跳跃推理／绝对化／教学口号／模糊量） |
+| `体例规范.md` | `TY-01` … `TY-19` | 19 | 层级、编号、六栏体例、术语引注、章末收口、字数口径、章末参考文献     |
+| `语言风格.md` | `YY-01` … `YY-25` | 25 | 句式、人称、时态；段级推进动作（学术史四要素／分域扫描／收口三件套）；附 5 类禁用词表 |
 | `学段适配.md` | `XD-01` … `XD-05` | 5  | 本科高年级 / MBA 的篇幅参数与难度曲线                    |
 | `练习设计.md` | `LX-01` … `LX-08` | 8  | 三层结构、题型配比、可评分性                            |
 | `审校标准.md` | `SJ-X1` … `SJ-X5` | 5  | 五维权重、否决项、脚本可判项清单                          |
@@ -222,7 +220,7 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 | 项目           | 状态    | 这意味着什么                      |
 | ------------ | ----- | --------------------------- |
 | 人工盲评（A/B 评分） | ⏭️ 豁免 | 「用了 skill 是否更好」**没有对照评分证据** |
-| 规范库 5 份专家签字  | ⏭️ 豁免 | 「58 条规则是否正确」**只有编写者自证**     |
+| 规范库 5 份专家签字  | ⏭️ 豁免 | 「62 条规则是否正确」**只有编写者自证**     |
 
 **豁免不等于通过。** 这两项是 SOP 要求的人工闸门，经项目负责人决定跳过。后果必须由使用者承担：
 
@@ -245,7 +243,7 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 │       ├── references/      该 skill 用到的规则副本
 │       ├── scripts/         自检脚本
 │       └── assets/          模板与范文
-├── 规范库/                   5 份规则母本（58 条）
+├── 规范库/                   5 份规则母本（62 条）
 ├── docs/
 │   ├── 阶段2-样本拆解报告.md
 │   ├── 阶段5-测试与评估报告.md
@@ -253,7 +251,7 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 │   ├── 测试用例/             T-03 ~ T-06 与两份对照组
 │   └── 盲评包/               A/B 文件 + 评分表 + 密封映射表
 ├── tools/trigger_test.py     触发回归工具
-├── dist/                     交付包（当前 v1.1.3，旧版在 archive/）
+├── dist/                     交付包 zip（当前 v1.1.4，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
