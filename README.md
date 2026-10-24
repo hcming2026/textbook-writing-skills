@@ -1,6 +1,6 @@
 # 中文教材编写 Skills
 
-![version](https://img.shields.io/badge/version-1.1.7-blue)
+![version](https://img.shields.io/badge/version-1.2.0-blue)
 
 ![skills](https://img.shields.io/badge/skills-9-green)
 
@@ -261,7 +261,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 ## 六、三条硬约定
 
 1. **学科与学段必给。** 学段只能是「本科高年级」或「MBA」，它决定全部篇幅参数——同一个知识点，本科导语 150–250 字、MBA 200–350 字；正文 3000–4500 对 2500–3500。学段说错，后面全错。
-2. **大纲先行。** 写正文前必须有 `<slug>-outline.md`，或至少给清「课程名 + 单元号 + 课号 + `LO-x-y`」。没挂 LO 的稿件过不了审校。
+2. **大纲先行。** 写正文前必须有 `<course-slug>-outline.md`，或至少给清「课程名 + 单元号 + 课号 + `LO-x-y`」。没挂 LO 的稿件过不了审校。
 3. **走文件不走口头。** 上一环的产物是磁盘上的文件，下游读文件，不读对话。
 
 ---
@@ -297,7 +297,8 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 | 项目   | 结果                                                                                                                              |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------- |
 | 触发测试 | 9 skill × 20 用例 = 180 条，漏判 0 / 误判 0（`tools/trigger_test.py`）                                                                    |
-| 脚本回归 | 4 个校验脚本全绿（`check_lo` / `check_outline` / `check_draft` / `check_exercise`）                                                      |
+| 脚本回归 | 4 个校验脚本 0 ERROR（`check_lo` / `check_outline` / `check_draft` / `check_exercise`）                                                 |
+| 一致性检查 | `tools/consistency_check.py` 0 ERROR / 0 WARN：副本与母本 md5 一致、引用路径全部存在、脚本参数有出处、九份章节结构一致、步骤编号连续 |
 | 审校用例 | 范文 0 ERROR / 0 WARN；故意写坏的稿件 17 ERROR / 4 WARN。另有 2 条否决项由人工判出（`SJ-X2` 科学性错误、`SJ-X4` 编造事实）——**脚本一条都没报出来**，这正是「脚本查格式、人工查对错」必须分工的证据 |
 | 跨学段  | 同一课写成本科版与 MBA 版，篇幅差异可被脚本检出（`XD-05`）                                                                                             |
 | 对照组  | 有 skill / 无 skill 各一份，差异可逐条核对                                                                                                   |
@@ -343,7 +344,9 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 │   ├── 阶段6-发布检查清单.md
 │   ├── 测试用例/             T-03 ~ T-06 与两份对照组
 │   └── 盲评包/               A/B 文件 + 评分表 + 密封映射表
-├── tools/trigger_test.py     触发回归工具
+├── tools/
+│   ├── trigger_test.py       触发回归工具
+│   └── consistency_check.py  九份 skill 与规范库的一致性检查
 ├── dist/                     交付包 zip（当前 v1.1.7，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
@@ -356,6 +359,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 | --------------------------- | --------------------------------------------------- |
 | `规范库/` 任一文件                 | 重新复制到各 skill 的 `references/`，否则脚本与规则会打架             |
 | 任一 `SKILL.md` 的 description | 跑 `python tools/trigger_test.py`，确认仍是 0 漏判；触发词表要同步改 |
+| 改完任何文件后 | 跑 `python tools/consistency_check.py`，有 ERROR 先修再提交 |
 | 规则微调                        | 升小版本号，同步 `CHANGELOG.md`                             |
 | 任何文件改动                      | 重新打包 `dist/textbook-skills-v<版本>.zip`               |
 | 底层模型升级                      | 重跑全部用例（SOP 阶段 6）                                    |

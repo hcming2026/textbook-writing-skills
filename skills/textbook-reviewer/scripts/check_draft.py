@@ -3,13 +3,16 @@
 """check_draft.py — 教材稿件事实性检查（unit-writer / textbook-reviewer 共用）
 
 用法：
-    python scripts/check_draft.py <稿件.md> [--json]
+    python <SKILL_DIR>/scripts/check_draft.py <稿件.md> [--json]
 
 只查「能用规则判定」的项：六栏齐全与顺序、各栏字数区间、练习三层、
 题目是否挂 LO、禁用词、跳跃推理词、句长段长、图表编号与来源、待核实标注。
 不做质量评分——分数由 textbook-reviewer 依 审校标准.md 给出。
 
 退出码：0 = 无 ERROR；1 = 存在 ERROR（不得交付）。
+
+注意：本脚本在 unit-writer / textbook-reviewer / textbook-formatter 三处各有一份副本，
+必须完全同源。改动后复制到另外两份，否则同一稿件在不同环节会得出不同结论。
 """
 
 import re
@@ -17,6 +20,8 @@ import sys
 import json
 from pathlib import Path
 
+# 学段参数：必须与 规范库/学段适配.md 及 体例规范.md TY-11 一致。
+# 改规则时同步本表，并跑 python tools/consistency_check.py 校验两边是否对得上。
 LEVEL_PARAMS = {
     "本科高年级": {"导语": (150, 250), "正文": (3000, 4500), "案例": (800, 1200), "拓展": (100, 200),
                    "练习比例": (5, 3, 2), "段限": 200},
