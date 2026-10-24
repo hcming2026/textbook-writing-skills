@@ -81,8 +81,10 @@ python -c "import hashlib;print(hashlib.sha256(open('textbook-skills-v1.2.0.zip'
 
 ## 同系列其他版本
 
-v1.1.2 起七个版本都有 Release 和附件，完整索引见 [README 的「版本历史」](https://github.com/hcming2026/textbook-writing-skills#版本历史)。
+v1.1.2 起八个版本都有 Release 和附件，完整索引见 [README 的「版本历史」](https://github.com/hcming2026/textbook-writing-skills#版本历史)。
 
-**除本版外都是历史版本**——v1.1.3–v1.1.7 都早于本版的三项 P0 修复，装上后脚本命令可能直接报 `No such file or directory`。
+**v1.1.3–v1.1.7 都是历史版本**——都早于本版的三项 P0 修复，装上后脚本命令可能直接报 `No such file or directory`。
+
+> **本版已有后继：v1.2.1。** 功能等价，差异只在版本字符串与文档。之所以另发一个号，是因为本版发布当天在同一版本号下重打包 7 次（328,835 → 331,379 bytes），`v1.2.0` 已无法指认一个确定产物。本版自 v1.2.1 发布起冻结，不再变动。
 
 > v1.1.3 的附件是重制包（70 文件 / 209,807 bytes）。原归档包 71 文件，其中一个 `docs/盲评包/_映射-密封勿发.md` 是盲评 A/B 组对应表，文件首行自述「不得发给评审教师」，打包时误入。重制只剔除该文件，其余 70 项逐字节未变。

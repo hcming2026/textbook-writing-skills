@@ -3,8 +3,10 @@
 """pack.py — 生成交付包 dist/textbook-skills-v<版本>.zip
 
 用法：
-    python tools/pack.py 1.2.0
+    python tools/pack.py <版本号>      # 例：python tools/pack.py 9.9.9
     python tools/pack.py            # 版本号从 CHANGELOG.md 第一条 v 记录读取
+
+两处示例都用占位版本号，不写真实版本——写真实版本会随发版过期，还得再改一次。
 
 打包内容与排除规则都写在下面两处清单里，不靠手工挑选——手工挑选必然漏。
 排除项含第三方版权图书与盲评密封件，二者都不得进入交付包。
@@ -37,7 +39,7 @@ def get_version():
     text = open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8").read()
     m = re.search(r"^## v(\d+\.\d+\.\d+)", text, re.M)
     if not m:
-        sys.exit("未能从 CHANGELOG.md 读到版本号，请显式传入：python tools/pack.py 1.2.0")
+        sys.exit("未能从 CHANGELOG.md 读到版本号，请显式传入：python tools/pack.py <版本号>")
     return m.group(1)
 
 

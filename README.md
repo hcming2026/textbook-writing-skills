@@ -1,6 +1,6 @@
 # 中文教材编写 Skills
 
-![version](https://img.shields.io/badge/version-1.2.0-blue)
+![version](https://img.shields.io/badge/version-1.2.1-blue)
 
 ![skills](https://img.shields.io/badge/skills-9-green)
 
@@ -346,7 +346,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 ├── tools/
 │   ├── trigger_test.py       触发回归工具
 │   └── consistency_check.py  九份 skill 与规范库的一致性检查
-├── dist/                     交付包 zip（当前 v1.2.0，旧版在 archive/）
+├── dist/                     交付包 zip（当前 v1.2.1，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
@@ -378,13 +378,14 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 ### 版本历史
 
-七个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
+八个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
 
-**除 v1.2.0 外都是历史版本。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。**请用 v1.2.0。**
+**除 v1.2.1 外都是历史版本。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次（328,835 → 331,379 字节不等），`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。**请用 v1.2.1。**
 
 | 版本 | 这一版做了什么 | 规则数 | 附件 |
 |---|---|---|---|
-| **v1.2.0** | 修九份 `SKILL.md` 之间「该一致却没一致」的地方；新增一致性守门与可复现打包 | 68 | 79 文件，大小见 Release 页 |
+| **v1.2.1** | 无规则变更。把 v1.2.0 下反复重打的包定死成一个确定产物 | 68 | 79 文件，大小见 Release 页 |
+| v1.2.0 | 修九份 `SKILL.md` 之间「该一致却没一致」的地方；新增一致性守门与可复现打包 | 68 | 79 文件，331,379 B |
 | v1.1.7 | 版式改用像素实测（版心 133.6 mm、36 字/行、10.5 pt），替换此前目测的参数 | 68 | 297,596 B |
 | v1.1.6 | 从技法上到判据：**YY-28**「拿掉这一段，读者会失去什么判断能力？」 | 68 | 281,437 B |
 | v1.1.5 | 推翻上一版的 TY-07：候选是**接力**不是并列，每个候选的出场理由来自上一个的缺陷 | 64 | 263,940 B |
@@ -394,7 +395,8 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 > v1.1.3 的附件是**重制包**（70 文件）。原始归档包 71 文件，其中一个 `docs/盲评包/_映射-密封勿发.md` 是盲评 A/B 组的实验/对照对应表，文件首行自述「不得发给评审教师」，打包时误入。重制时只剔除该文件，其余 70 项逐字节未变。详见该版本的 Release 说明。
 >
-> **v1.2.0 那一行不写字节数是有意的**：本 README 就在交付包内，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。历史版本的大小是固定的，写上有对照价值；当前版请以 Release 页为准。
+> **表里只有 v1.2.1 那行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以只有**当前版**留白，请以 Release 页为准。v1.2.0 那一格是发 v1.2.1 时才补上的（331,379 B），它定格之前的 7 次重打没有意义，定格之后才有对照价值。
+
 
 ---
 
