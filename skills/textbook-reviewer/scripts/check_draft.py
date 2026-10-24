@@ -188,11 +188,15 @@ def main(argv):
     for w in BANNED:
         c = full.count(w)
         if c:
-            rep.err("语言", f"出现禁用词「{w}」×{c}（YY-06 禁用词表）")
+            rep.err("语言", f"出现禁用词「{w}」×{c}（语言风格 六、禁用词表；总则 YY-01）")
     for w in JUMP:
         c = full.count(w)
         if c:
             rep.err("语言", f"出现跳跃推理词「{w}」×{c}（YY-11）")
+
+    # 4b. 数字空格分节（YY-21）：1 098 这类写法是英文排版直译，不合 GB/T 15835
+    for m in re.finditer(r"(?<![\d,.])\d{1,3}(?: \d{3})+(?![\d])", full):
+        rep.warn("语言", f"数字用了空格分节「{m.group(0)}」，应为 {m.group(0).replace(' ', ',')} 或连写（YY-21）")
 
     # 5. 句长与段长
     para_limit = P["段限"]

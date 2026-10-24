@@ -1,10 +1,15 @@
 # 中文教材编写 Skills
 
-![version](https://img.shields.io/badge/version-1.1.2-blue)
+![version](https://img.shields.io/badge/version-1.1.3-blue)
+
 ![skills](https://img.shields.io/badge/skills-9-green)
-![rules](https://img.shields.io/badge/规范库-53%20条-orange)
+
+![rules](https://img.shields.io/badge/规范库-58%20条-orange)
+
 ![scope](https://img.shields.io/badge/学科-管理科学与工程-lightgrey)
+
 ![format](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)
+
 ![deps](https://img.shields.io/badge/校验脚本-零依赖-success)
 
 面向**管理科学与工程**学科（本科高年级 / MBA）的中文教材编写流水线。9 个 skill 把「拆样本 → 课标映射 → 大纲 → 正文 → 练习/素材 → 审校 → 排版」固化成一条可执行、可检查的流程，每一步都有确定的输入、确定的产物，以及一个能跑出结论的自检脚本。
@@ -15,6 +20,8 @@
 
 > ⚠️ **使用前请读第七节。** 本项目的规范库未经学科专家签字，人工盲评经项目负责人决定豁免。产出只能作内部起草，不得对外称「已审定教材」。
 
+
+
 ---
 
 ## 一、快速开始
@@ -23,12 +30,12 @@
 
 Agent Skills 的约定是「一个 skill 一个目录，目录里必须有 `SKILL.md`」。不同客户端只是扫描的目录不同，**内容完全一样**，所以装一次可以喂给多个工具。
 
-| 客户端 | 个人级（所有项目可用） | 项目级（仅当前项目） |
-|---|---|---|
-| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
-| Cursor | 建议用项目级 | `.cursor/skills/` 或 `.agents/skills/`（也会读 `.claude/skills/`） |
-| Codex | 建议用项目级 | `.agents/skills/` |
-| WorkBuddy | `~/.workbuddy/skills/` | `.workbuddy/skills/` |
+| 客户端         | 个人级（所有项目可用）            | 项目级（仅当前项目）                                                   |
+| ----------- | ---------------------- | ------------------------------------------------------------ |
+| Claude Code | `~/.claude/skills/`    | `.claude/skills/`                                            |
+| Cursor      | 建议用项目级                 | `.cursor/skills/` 或 `.agents/skills/`（也会读 `.claude/skills/`） |
+| Codex       | 建议用项目级                 | `.agents/skills/`                                            |
+| WorkBuddy   | `~/.workbuddy/skills/` | `.workbuddy/skills/`                                         |
 
 **推荐做法：只留一份真身，其余用链接。** 这套东西最大的维护坑是「规则副本不同步」——9 个 skill 各自带着 `references/` 副本，多装几份就等于多几个漂移点。
 
@@ -36,7 +43,7 @@ Agent Skills 的约定是「一个 skill 一个目录，目录里必须有 `SKIL
 # 取一份真身
 git clone https://github.com/hcming2026/textbook-writing-skills.git ~/src/textbook-skills
 # 或从 Release 下交付包
-curl -LO https://github.com/hcming2026/textbook-writing-skills/releases/download/v1.1.2/textbook-skills-v1.1.2.zip
+curl -LO https://github.com/hcming2026/textbook-writing-skills/releases/download/v1.1.3/textbook-skills-v1.1.3.zip
 
 # 建个人级目录，把 9 个 skill 逐个链过去（macOS / Linux）
 mkdir -p ~/.claude/skills
@@ -64,7 +71,7 @@ cp -r skills/* <目标目录>/
 
 ```markdown
 教材编写按 skills/textbook-builder/SKILL.md 的流程走。
-各环节规则见 规范库/（53 条，TY/YY/XD/LX/SJ 编号）。
+各环节规则见 规范库/（58 条，TY/YY/XD/LX/SJ 编号）。
 正文写完必须跑 skills/unit-writer/scripts/check_draft.py，有 ERROR 不得交付。
 ```
 
@@ -83,7 +90,7 @@ python skills/exercise-designer/scripts/check_exercise.py 习题.md --level=MBA
 
 唯一有外部依赖的是 `textbook-analyzer/scripts/render_pages.py`（扫版 PDF 需要 `pip install pymupdf` 才能渲染）。
 
-规则本身也是可读的：`规范库/` 里 53 条规则就是给人看的，不装任何工具、不看任何代码，照着写也行。
+规则本身也是可读的：`规范库/` 里 58 条规则就是给人看的，不装任何工具、不看任何代码，照着写也行。
 
 ### 1.3 验证装对了
 
@@ -101,17 +108,17 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 不需要记 skill 名字，**照平常说话就行**，触发词命中后会自己路由：
 
-| 你说 | 谁接手 |
-|---|---|
-| 「我要写一本教材，从哪开始」 | `textbook-builder` 判断你处在哪一环 |
-| 「拆解这本教材，做横向对比」 | `textbook-analyzer` |
-| 「把课标拆成学习目标」 | `curriculum-mapper` |
-| 「设计 48 学时 MBA 教材大纲」 | `outline-designer` |
-| 「按大纲写第 2 单元第 3 课」 | `unit-writer` |
-| 「给这一课配三层练习题」 | `exercise-designer` |
-| 「写个案例，制造业系统上线冲突」 | `material-creator` |
-| 「审一下这一课，看能不能交」 | `textbook-reviewer` |
-| 「按体例排版成 docx」 | `textbook-formatter` |
+| 你说                  | 谁接手                         |
+| ------------------- | --------------------------- |
+| 「我要写一本教材，从哪开始」      | `textbook-builder` 判断你处在哪一环 |
+| 「拆解这本教材，做横向对比」      | `textbook-analyzer`         |
+| 「把课标拆成学习目标」         | `curriculum-mapper`         |
+| 「设计 48 学时 MBA 教材大纲」 | `outline-designer`          |
+| 「按大纲写第 2 单元第 3 课」   | `unit-writer`               |
+| 「给这一课配三层练习题」        | `exercise-designer`         |
+| 「写个案例，制造业系统上线冲突」    | `material-creator`          |
+| 「审一下这一课，看能不能交」      | `textbook-reviewer`         |
+| 「按体例排版成 docx」       | `textbook-formatter`        |
 
 ---
 
@@ -136,17 +143,17 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 ## 三、9 个 Skill
 
-| Skill | 做什么 | 典型触发语 | 产物 |
-|---|---|---|---|
-| `textbook-builder` | 项目状态判断与路由，不做具体写作 | 「我要写一本教材」「现在该做什么」「还缺哪些产物」 | 环节判定 + 调度 |
-| `textbook-analyzer` | 按九维拆解样本教材，出单套分析表与横向对比表 | 「拆解这本教材」「看看别人怎么编的」「提炼编写规律」 | `分析表.md` |
-| `curriculum-mapper` | 课标 / 培养方案 → 可追溯的学习目标表 | 「把课标拆成教学目标」「对齐课程标准」「目标怎么编号」 | `LO表.csv` |
-| `outline-designer` | 全书—单元—课时三级大纲，含学时配平 | 「排目录」「划分单元」「分配课时」「定每节课的篇幅配额」 | `<slug>-outline.md` |
-| `unit-writer` | 按六栏体例写一节课完整正文 | 「写一课」「撰写第 2 章第 3 节」「改写成另一学段版本」 | `<slug>-u<单元>-l<课>.md` |
-| `exercise-designer` | 基础 / 提高 / 拓展三层习题，每题挂 LO | 「出练习题」「配一套案例分析题」「设计拓展题」 | `<slug>-ex-u<单元>-l<课>.md` |
-| `material-creator` | 原创案例与情境数据，数据须自洽可核算 | 「写个案例」「造一组可核算的数据」「编一个情境」 | 素材 `.md` |
-| `textbook-reviewer` | 五维评分 + 否决项核查 + 带位置的问题清单 | 「审一下这一课」「能不能定稿」「出个审校报告」 | `<slug>-review-u_-l_.md` |
-| `textbook-formatter` | 稿件 → 结构化 Word（标题层级、栏目样式、题注、参考文献） | 「排版成 Word」「导出 docx」「统一标题样式」 | `.docx` |
+| Skill                | 做什么                              | 典型触发语                          | 产物                        |
+| -------------------- | -------------------------------- | ------------------------------ | ------------------------- |
+| `textbook-builder`   | 项目状态判断与路由，不做具体写作                 | 「我要写一本教材」「现在该做什么」「还缺哪些产物」      | 环节判定 + 调度                 |
+| `textbook-analyzer`  | 按九维拆解样本教材，出单套分析表与横向对比表           | 「拆解这本教材」「看看别人怎么编的」「提炼编写规律」     | `分析表.md`                  |
+| `curriculum-mapper`  | 课标 / 培养方案 → 可追溯的学习目标表            | 「把课标拆成教学目标」「对齐课程标准」「目标怎么编号」    | `LO表.csv`                 |
+| `outline-designer`   | 全书—单元—课时三级大纲，含学时配平               | 「排目录」「划分单元」「分配课时」「定每节课的篇幅配额」   | `<slug>-outline.md`       |
+| `unit-writer`        | 按六栏体例写一节课完整正文                    | 「写一课」「撰写第 2 章第 3 节」「改写成另一学段版本」 | `<slug>-u<单元>-l<课>.md`    |
+| `exercise-designer`  | 基础 / 提高 / 拓展三层习题，每题挂 LO          | 「出练习题」「配一套案例分析题」「设计拓展题」        | `<slug>-ex-u<单元>-l<课>.md` |
+| `material-creator`   | 原创案例与情境数据，数据须自洽可核算               | 「写个案例」「造一组可核算的数据」「编一个情境」       | 素材 `.md`                  |
+| `textbook-reviewer`  | 五维评分 + 否决项核查 + 带位置的问题清单          | 「审一下这一课」「能不能定稿」「出个审校报告」        | `<slug>-review-u_-l_.md`  |
+| `textbook-formatter` | 稿件 → 结构化 Word（标题层级、栏目样式、题注、参考文献） | 「排版成 Word」「导出 docx」「统一标题样式」    | `.docx`                   |
 
 **不适用**：纯翻译、润色、查重、逐字校对错别字、生成插图、生成 PDF、考试命题。`textbook-reviewer` 只出报告不改稿，改稿回 `unit-writer`。
 
@@ -162,15 +169,15 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 ## 五、产物与自检脚本
 
-| 环节 | 产物命名 | 自检 |
-|---|---|---|
-| LO 表 | `LO表.csv` | `check_lo.py <LO表.csv>` |
-| 大纲 | `<slug>-outline.md` | `check_outline.py <大纲.md>` |
-| 正文 | `<slug>-u<单元>-l<课>.md` | `check_draft.py <稿件.md> [--json]` |
-| 习题 | `<slug>-ex-u<单元>-l<课>.md` | `check_exercise.py <习题.md> [--level=MBA 或 本科高年级]` |
-| 样本拆解 | `分析表.md` | `render_pages.py <教材.pdf> --probe`（先探文本层再渲染识读） |
-| 审校报告 | `<slug>-review-u_-l_.md` | 复用 `check_draft.py` |
-| Word | `<课程名>-<单元>-<课>.docx` | 排版核对单 |
+| 环节   | 产物命名                      | 自检                                                |
+| ---- | ------------------------- | ------------------------------------------------- |
+| LO 表 | `LO表.csv`                 | `check_lo.py <LO表.csv>`                           |
+| 大纲   | `<slug>-outline.md`       | `check_outline.py <大纲.md>`                        |
+| 正文   | `<slug>-u<单元>-l<课>.md`    | `check_draft.py <稿件.md> [--json]`                 |
+| 习题   | `<slug>-ex-u<单元>-l<课>.md` | `check_exercise.py <习题.md> [--level=MBA 或 本科高年级]` |
+| 样本拆解 | `分析表.md`                  | `render_pages.py <教材.pdf> --probe`（先探文本层再渲染识读）    |
+| 审校报告 | `<slug>-review-u_-l_.md`  | 复用 `check_draft.py`                               |
+| Word | `<课程名>-<单元>-<课>.docx`     | 排版核对单                                             |
 
 脚本只出**事实性违规清单**（第几行、违反哪条规则），不给分。分数由 `textbook-reviewer` 按 `审校标准.md` 的权重给——这个分工是刻意的，见第七节。
 
@@ -180,15 +187,15 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 ## 六、规范库
 
-`规范库/` 是规则母本，共 **53 条**，用编号前缀区分来源：
+`规范库/` 是规则母本，共 **58 条**，用编号前缀区分来源：
 
-| 文件 | 编号 | 条数 | 管什么 |
-|---|---|---|---|
-| `体例规范.md` | `TY-01` … `TY-18` | 18 | 层级、编号、六栏体例、术语引注、章末收口、字数口径 |
-| `语言风格.md` | `YY-01` … `YY-17` | 17 | 句式、人称、时态，附 5 类禁用词表（空转词／跳跃推理／绝对化／教学口号／模糊量） |
-| `学段适配.md` | `XD-01` … `XD-05` | 5 | 本科高年级 / MBA 的篇幅参数与难度曲线 |
-| `练习设计.md` | `LX-01` … `LX-08` | 8 | 三层结构、题型配比、可评分性 |
-| `审校标准.md` | `SJ-X1` … `SJ-X5` | 5 | 五维权重、否决项、脚本可判项清单 |
+| 文件        | 编号                | 条数 | 管什么                                       |
+| --------- | ----------------- | -- | ----------------------------------------- |
+| `体例规范.md` | `TY-01` … `TY-18` | 18 | 层级、编号、六栏体例、术语引注、章末收口、字数口径                 |
+| `语言风格.md` | `YY-01` … `YY-22` | 22 | 句式、人称、时态，附 5 类禁用词表（空转词／跳跃推理／绝对化／教学口号／模糊量） |
+| `学段适配.md` | `XD-01` … `XD-05` | 5  | 本科高年级 / MBA 的篇幅参数与难度曲线                    |
+| `练习设计.md` | `LX-01` … `LX-08` | 8  | 三层结构、题型配比、可评分性                            |
+| `审校标准.md` | `SJ-X1` … `SJ-X5` | 5  | 五维权重、否决项、脚本可判项清单                          |
 
 **六栏体例**（顺序不可变）：导语 → 正文 → 案例 → 思考 → 练习 → 拓展。
 
@@ -202,20 +209,20 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 ### 已验证（机器可判）
 
-| 项目 | 结果 |
-|---|---|
-| 触发测试 | 9 skill × 20 用例 = 180 条，漏判 0 / 误判 0（`tools/trigger_test.py`） |
-| 脚本回归 | 4 个校验脚本全绿（`check_lo` / `check_outline` / `check_draft` / `check_exercise`） |
+| 项目   | 结果                                                                                                                              |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 触发测试 | 9 skill × 20 用例 = 180 条，漏判 0 / 误判 0（`tools/trigger_test.py`）                                                                    |
+| 脚本回归 | 4 个校验脚本全绿（`check_lo` / `check_outline` / `check_draft` / `check_exercise`）                                                      |
 | 审校用例 | 范文 0 ERROR / 0 WARN；故意写坏的稿件 17 ERROR / 4 WARN。另有 2 条否决项由人工判出（`SJ-X2` 科学性错误、`SJ-X4` 编造事实）——**脚本一条都没报出来**，这正是"脚本查格式、人工查对错"必须分工的证据 |
-| 跨学段 | 同一课写成本科版与 MBA 版，篇幅差异可被脚本检出（`XD-05`） |
-| 对照组 | 有 skill / 无 skill 各一份，差异可逐条核对 |
+| 跨学段  | 同一课写成本科版与 MBA 版，篇幅差异可被脚本检出（`XD-05`）                                                                                             |
+| 对照组  | 有 skill / 无 skill 各一份，差异可逐条核对                                                                                                   |
 
 ### 未经第三方验证（豁免）
 
-| 项目 | 状态 | 这意味着什么 |
-|---|---|---|
+| 项目           | 状态    | 这意味着什么                      |
+| ------------ | ----- | --------------------------- |
 | 人工盲评（A/B 评分） | ⏭️ 豁免 | 「用了 skill 是否更好」**没有对照评分证据** |
-| 规范库 5 份专家签字 | ⏭️ 豁免 | 「53 条规则是否正确」**只有编写者自证** |
+| 规范库 5 份专家签字  | ⏭️ 豁免 | 「58 条规则是否正确」**只有编写者自证**     |
 
 **豁免不等于通过。** 这两项是 SOP 要求的人工闸门，经项目负责人决定跳过。后果必须由使用者承担：
 
@@ -238,7 +245,7 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 │       ├── references/      该 skill 用到的规则副本
 │       ├── scripts/         自检脚本
 │       └── assets/          模板与范文
-├── 规范库/                   5 份规则母本（53 条）
+├── 规范库/                   5 份规则母本（58 条）
 ├── docs/
 │   ├── 阶段2-样本拆解报告.md
 │   ├── 阶段5-测试与评估报告.md
@@ -246,7 +253,7 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 │   ├── 测试用例/             T-03 ~ T-06 与两份对照组
 │   └── 盲评包/               A/B 文件 + 评分表 + 密封映射表
 ├── tools/trigger_test.py     触发回归工具
-├── dist/                     交付包（当前 v1.1.2，旧版在 archive/）
+├── dist/                     交付包（当前 v1.1.3，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
@@ -258,13 +265,13 @@ python $SKILLS/unit-writer/scripts/check_draft.py \
 
 ## 九、维护
 
-| 改了什么 | 要做什么 |
-|---|---|
-| `规范库/` 任一文件 | 重新复制到各 skill 的 `references/`，否则脚本与规则会打架 |
+| 改了什么                        | 要做什么                                                |
+| --------------------------- | --------------------------------------------------- |
+| `规范库/` 任一文件                 | 重新复制到各 skill 的 `references/`，否则脚本与规则会打架             |
 | 任一 `SKILL.md` 的 description | 跑 `python tools/trigger_test.py`，确认仍是 0 漏判；触发词表要同步改 |
-| 规则微调 | 升小版本号，同步 `CHANGELOG.md` |
-| 任何文件改动 | 重新打包 `dist/textbook-skills-v<版本>.zip` |
-| 底层模型升级 | 重跑全部用例（SOP 阶段 6） |
+| 规则微调                        | 升小版本号，同步 `CHANGELOG.md`                             |
+| 任何文件改动                      | 重新打包 `dist/textbook-skills-v<版本>.zip`               |
+| 底层模型升级                      | 重跑全部用例（SOP 阶段 6）                                    |
 
 同步命令：
 
@@ -283,19 +290,19 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 ## 十、常见问题
 
-**Q：能不能直接写 MBA 的课，不给大纲？**
+**Q：能不能直接写 MBA 的课，不给大纲？**  
 不能。至少要给「课程名 + 单元号 + 课号 + `LO-x-y`」。没挂 LO 的稿件，审校第一步就会卡住——因为没有 LO 就无法判断这一课该讲什么、练习该考什么。
 
-**Q：审校给了 4.5 分，是不是可以交了？**
+**Q：审校给了 4.5 分，是不是可以交了？**  
 分数只反映**规范符合度**，不反映内容对错。五维评分里没有「观点是否正确」这一项，那是人工的事。另外见第七节第 3 条。
 
-**Q：为什么脚本报了一堆 ERROR，我觉得没问题？**
+**Q：为什么脚本报了一堆 ERROR，我觉得没问题？**  
 脚本判的是格式事实（字数、编号、栏目、挂载关系），不做语义判断。如果确实认为规则不合理，改 `规范库/` 母本并同步副本，而不是绕过脚本。
 
-**Q：字数为什么和我 Word 里看到的不一样？**
+**Q：字数为什么和我 Word 里看到的不一样？**  
 口径不同。本系列按**汉字数**计（只数中日韩统一表意文字，不含标点、数字、英文、空格），与 Word「字符数（不计空格）」相差 5%–8%，见 `TY-18`。
 
-**Q：能改成别的学科吗？**
+**Q：能改成别的学科吗？**  
 `TY` 与 `YY` 两类规则通用；`XD`（学段参数）、`LX`（练习配比）和方法论部分是针对管理科学与工程的，换学科需要重做阶段 2 的样本拆解，不能只改几个数字。
 
 ---
@@ -311,6 +318,8 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 ## 参考
 
 - `需求说明书.md` — 项目范围、边界、验收标准（阶段 1）
+
+
 - `docs/阶段5-测试与评估报告.md` — 触发测试、效果测试、通过标准
 - `docs/阶段6-发布检查清单.md` — 发布前 14 项核对结果
 - `CHANGELOG.md` — 版本记录与已知问题（K1–K7）
