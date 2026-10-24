@@ -347,7 +347,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 ├── tools/
 │   ├── trigger_test.py       触发回归工具
 │   └── consistency_check.py  九份 skill 与规范库的一致性检查
-├── dist/                     交付包 zip（当前 v1.1.7，旧版在 archive/）
+├── dist/                     交付包 zip（当前 v1.2.0，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
