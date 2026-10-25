@@ -228,6 +228,40 @@ def check_rule_ids():
                 err("RULE-ID", f"{rel} 引用 {rid}，但母本里没有这条编号")
 
 
+# ---------- 检查 8：跨 skill 共用的脚本副本必须逐字节一致 ----------
+# check_draft.py 在 3 处、lang_rules.py 在 4 处各存一份，靠 cp 同步。
+# 这层如果没有守门，改了主份忘了复制，同一份稿件在「写作 / 审校 / 排版」三个环节
+# 会得出不同结论——而且不会报错，只会静默地少报或多报几条。
+SHARED_SCRIPTS = {
+    "check_draft.py": 3,   # unit-writer / textbook-reviewer / textbook-formatter
+    "lang_rules.py": 4,    # 上述三处 + textbook-polish
+}
+
+
+def check_script_copies():
+    for name, expect in SHARED_SCRIPTS.items():
+        found = []
+        for sk in skill_names():
+            p = os.path.join(SKILLS_DIR, sk, "scripts", name)
+            if os.path.exists(p):
+                found.append((sk, p))
+        if not found:
+            continue
+        if len(found) != expect:
+            err("SCRIPT-COUNT",
+                f"{name} 应有 {expect} 份副本，实有 {len(found)} 份："
+                + "、".join(sk for sk, _ in found))
+        digests = {sk: hashlib.md5(open(p, "rb").read()).hexdigest() for sk, p in found}
+        uniq = set(digests.values())
+        if len(uniq) > 1:
+            # 以 textbook-reviewer 那份为准（它是主份所在）
+            base = digests.get("textbook-reviewer")
+            drift = [sk for sk, h in digests.items() if h != base]
+            err("SCRIPT-DRIFT",
+                f"{name} 各副本内容不一致，与主份（textbook-reviewer）不同："
+                + "、".join(drift) + "；用 cp 从主份重新同步")
+
+
 def main():
     quiet = "--quiet" in sys.argv
     check_reference_copies()
@@ -237,6 +271,7 @@ def main():
     check_step_numbers()
     check_description_boundary()
     check_rule_ids()
+    check_script_copies()
 
     if not quiet:
         for code, msg in errors:

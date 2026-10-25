@@ -20,6 +20,12 @@ import sys
 import json
 from pathlib import Path
 
+# 语言规则检测器：与 textbook-polish/scripts/lint_polish.py 共用同一份 lang_rules.py，
+# 两处不得各写一套（否则同一稿件在审校与润色两个环节会得出不同结论）。
+# 导入失败不静默吞掉——文件缺失时宁可整脚本报错，也不让病句检测悄悄失效。
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lang_rules import scan as lang_scan, summarize as lang_sum  # noqa: E402
+
 # 学段参数：必须与 规范库/学段适配.md 及 体例规范.md TY-11 一致。
 # 改规则时同步本表，并跑 python tools/consistency_check.py 校验两边是否对得上。
 LEVEL_PARAMS = {
@@ -61,23 +67,8 @@ BANNED = ["赋能", "抓手", "闭环", "生态位", "打法", "组合拳", "让
           "本章将带你走进", "毋庸置疑"]
 JUMP = ["显然", "众所周知", "不难看出"]
 
-# 病句候选格式（YY-31/35/36）。**只用于出候选行号，不得判违规。**
-# 收录标准是「高精度、低覆盖」：宁可漏，不可误报。四类病句里只有两类、
-# 六个格式能写成正则，覆盖不到 YY-31 全貌，更完全查不了 YY-32（指代）、
-# YY-33（因果）、YY-34（推论越界）——那三项一个字都不报，不代表没有。
-# 把候选当违规报，会让作者以为「查过了」，假阴性比不查更危险（审校标准 §三 注）。
-SICK_PATTERNS = [
-    ("成分残缺", r"通过[^。；！？\n]{0,40}[，,]\s*使", "YY-31①"),
-    ("句式杂糅", r"原因(?:是|在于)[^。；\n]{0,40}(?:造成的|所致)", "YY-31③"),
-    ("句式杂糅", r"本着[^。；\n]{0,20}为原则", "YY-31③"),
-    ("句式杂糅", r"靠的是[^。；\n]{0,20}(?:取得的|得来的)", "YY-31③"),
-    ("搭配不当", r"开展[^。；\n]{0,12}(?:水平|程度)", "YY-31②"),
-    ("搭配不当", r"提高[^。；\n]{0,10}(?:机制|体制)", "YY-31②"),
-    ("数量表达", r"(?:减少|降低|下降)了?[^。；\n]{0,6}[一两二三四五六七八九十百\d]+\s*倍", "YY-36①"),
-    # 只收高置信度口语词。含「啥」「搞」的一律不收——「搞清楚」「啥时候」在两可之间，
-    # 误报会稀释整份候选清单的可信度。案例对话里的口语属合法，需人工看边界。
-    ("口语化", r"说白了|这玩意儿|想当年|一抓一大把|没啥", "YY-35"),
-]
+# 病句检测规则已抽到同目录 lang_rules.py（A 级可判 / B 级须确认），
+# 与 textbook-polish 共用，避免两处漂移。见该文件头部说明。
 LO_RE = re.compile(r"LO-\d+-\d+")
 FIG_RE = re.compile(r"(图|表)\s*\d+\.\d+\.\d+")
 VAGUE_RE = re.compile(r"(谈谈你的|说说你的|谈谈对|谈谈你对|你的理解|谈谈看法|有何感想)")
@@ -154,6 +145,11 @@ def parse_chapter(lines, start):
             if cur:
                 secs[cur] = "\n".join(buf)
             cur, buf, in_tail = None, [], True
+            # 标题行必须保留进 tail：下游的章级模块存在性检查（CHAPTER_MODULES）
+            # 是在 whole = preface + secs + tail 里找「本章小结」「参考文献」这些字。
+            # 早先这里直接 continue 把标题丢掉，模块能否被认出来就变成了碰运气——
+            # 只有当正文碰巧复述了标题词时才算找到，T-07 用例里因此误报缺三块。
+            tail.append(line)
             continue
         if CHAPTER_SEP.match(line) and not CHAPTER_SUB.match(line):
             if cur:
@@ -345,22 +341,23 @@ def main(argv):
     for m in re.finditer(r"(?<![\d,.])\d{1,3}(?: \d{3})+(?![\d])", full):
         rep.warn("语言", f"数字用了空格分节「{m.group(0)}」，应为 {m.group(0).replace(' ', ',')} 或连写（YY-21）")
 
-    # 4c. 病句候选（诊断组，YY-31 / YY-35 / YY-36）
-    # 只报行号，不判违规，走 INFO 级：不进 WARN 计数，不影响退出码。
-    # 理由见 SICK_PATTERNS 上方注释与审校标准 §三 注。
-    hits = {}
-    for idx in range(start, len(lines)):
-        s = lines[idx].strip()
-        if not s or re.match(r"^\s*(#{1,6}|[|>]|\d+[\.、)]\s|[-*+]\s)", s):
-            continue
-        for label, pat, rule in SICK_PATTERNS:
-            if re.search(pat, s):
-                hits.setdefault((label, rule), []).append((idx + 1, s[:30]))
-    for (label, rule), recs in hits.items():
-        head = "；".join(f"行{r}：{t}…" for r, t in recs[:3])
-        more = f"（仅列前 3 处，共 {len(recs)} 处）" if len(recs) > 3 else ""
-        rep.note("病句候选", f"{label} {len(recs)} 处{more} [{rule}] 诊断组，"
-                             f"须人工定判、不判不合格 —— {head}")
+    # 4c. 语病与逻辑（YY-31 ~ YY-36，规则见同目录 lang_rules.py）
+    # A 级：格式可枚举、几乎无歧义 → WARN，须处理或写明不改理由（不设 ERROR：
+    #      语言规范在五维里是扣分维度而非否决项，见审校标准 §二 注）。
+    # B 级：语义强信号、依赖上下文 → INFO 诊断组，给定位与判据，由人定判。
+    lang_recs = lang_scan(lines[start:])
+    # 行号相对正文起点，换算回文件真实行号
+    for r in lang_recs:
+        r["行"] += start
+    la, lb, la_by = lang_sum(lang_recs)
+    for (grade, kind), recs in sorted(la_by.items()):
+        head = "；".join(f"行{r['行']}「{r['原文'][:26]}」" for r in recs[:3])
+        more = f"（共 {len(recs)} 处，列前 3）" if len(recs) > 3 else ""
+        if grade == "A":
+            rep.warn(kind, f"{len(recs)} 处{more} [{recs[0]['依据']}] {recs[0]['改法']} —— {head}")
+        else:
+            rep.note(kind, f"{len(recs)} 处{more} [{recs[0]['依据']}] "
+                            f"诊断组，须人工定判、不判不合格 —— {head}")
 
     # 5. 句长与段长
     para_limit = P["段限"]

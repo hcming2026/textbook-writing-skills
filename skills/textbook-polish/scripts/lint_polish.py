@@ -11,8 +11,11 @@
     python <SKILL_DIR>/scripts/lint_polish.py <稿件.md> --json
 
 两组指标，**不得混用**：
-  合规组  超 60 字句、段超限、禁用词、数字空格分节 —— 依据 规范库，命中即须处理
-  诊断组  元叙述候选 —— 只作线索，甲类乙类必须人工判（见 references/元叙述.md）
+  合规组  超 60 字句、段超限、禁用词、数字空格分节、**A 级病句** —— 依据 规范库，命中即须处理
+  诊断组  元叙述候选、**B 级语言待核** —— 只作线索，必须人工判（见 references/元叙述.md、改稿动作.md §一）
+
+A 级／B 级的分野见同目录 lang_rules.py：A 级格式可枚举、几乎无歧义，可判违规；
+B 级是语义强信号（指代、因果方向、推论越界），依赖上下文，只给定位与判据。
 
 量纲：句长段长按**汉字数**（TY-18），断句含分号。与「含标点字符数」不是一个口径，
 不要拿本脚本的数去比 references/语言风格.md 里的实测均值 49 字（那是含标点口径）。
@@ -24,6 +27,11 @@ import sys
 import re
 import json
 from pathlib import Path
+
+# 语言规则检测器：与 textbook-reviewer/scripts/check_draft.py 共用同一份 lang_rules.py。
+# 导入失败不静默吞掉——文件缺失时宁可整脚本报错，也不让病句检测悄悄失效。
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lang_rules import scan as lang_scan  # noqa: E402
 
 # 与 规范库/语言风格.md §六 禁用词表一致。母本改了这里要跟着改。
 BANNED = ["赋能", "抓手", "闭环", "生态位", "打法", "组合拳",
@@ -113,6 +121,20 @@ def scan(lines, paradigm, level):
             if st and MATA_SUBJ.search(st) and MATA_VERB.search(st) and zh_len(st) <= 80:
                 mata.append({"行": lineno, "节": cur_sec, "原文": st[:50]})
 
+    # 语病与逻辑（YY-31 ~ YY-36，规则见同目录 lang_rules.py）。
+    # frontmatter 必须先跳过：YAML 行不含中文，但会把段落切碎、行号错位。
+    st = 0
+    if lines and lines[0].strip() == "---":
+        for i in range(1, len(lines)):
+            if lines[i].strip() == "---":
+                st = i + 1
+                break
+    lang_recs = lang_scan(lines[st:])
+    for r in lang_recs:
+        r["行"] += st
+    sick_a = [r for r in lang_recs if r["等级"] == "A"]
+    sick_b = [r for r in lang_recs if r["等级"] == "B"]
+
     return {
         "范式": "章节制" if paradigm == "chapter" else "单元制",
         "学段": level,
@@ -125,13 +147,16 @@ def scan(lines, paradigm, level):
             "最长段": max([d["字数"] for d in long_para], default=0),
             "禁用词": sum(d["次"] for d in banned),
             "数字空格分节": len(numsplit),
+            "A级病句": len(sick_a),
             "_超长句明细": long_sent,
             "_超长段明细": long_para,
             "_禁用词明细": banned,
             "_数字分节明细": numsplit,
+            "_病句明细": sick_a,
             "_保护块提示": protected_hits,
         },
-        "诊断": {"元叙述候选": len(mata), "_元叙述明细": mata},
+        "诊断": {"元叙述候选": len(mata), "_元叙述明细": mata,
+                 "B级待核": len(sick_b), "_待核明细": sick_b},
     }
 
 
@@ -157,16 +182,24 @@ def report(r, top=8):
         L.append(f"  保护块内命中    {len(c['_保护块提示']):>3} 处（图稿说明/说明框元数据，不属正文，交作者定）")
         for d in c["_保护块提示"][:3]:
             L.append(f"      行 {d['行']:<5}{d['词']}×{d['次']}  {d['原文']}")
+    L.append(f"  A 级病句        {c['A级病句']:>3} 处  ← YY-31/35/36（格式可枚举，命中即须处理）")
+    for d in c["_病句明细"][:top]:
+        L.append(f"      行 {d['行']:<5}[{d['类型']} {d['依据']}]  {d['原文']}…")
+        L.append(f"             改法：{d['改法']}")
     L.append("")
     d = r["诊断"]
     L.append("【诊断组】只作线索，不得用于判定稿件不合格")
     L.append(f"  元叙述候选      {d['元叙述候选']:>3} 处  ← 甲类删主语 / 乙类保留，必须人工判（references/元叙述.md）")
     for x in d["_元叙述明细"][:top]:
         L.append(f"      行 {x['行']:<5}{x['原文']}")
+    L.append(f"  语言待核        {d['B级待核']:>3} 处  ← 指代／因果方向／推论越界，须人工定判（改稿动作.md §一）")
+    for x in d["_待核明细"][:top]:
+        L.append(f"      行 {x['行']:<5}[{x['类型']} {x['依据']}]  {x['原文']}…")
+        L.append(f"             判据：{x['判据']}")
     L.append("")
     L.append("-" * 62)
-    L.append("下一步：超长句逐条判「该断还是该留」；禁用词逐条处理或写明不改理由；")
-    L.append("元叙述候选逐条标甲/乙。改完重跑本脚本，合规组数值只降不升。")
+    L.append("下一步：超长句逐条判「该断还是该留」；禁用词与 A 级病句逐条处理或写明不改理由；")
+    L.append("元叙述候选标甲/乙；语言待核逐条确认。改完重跑本脚本，合规组数值只降不升。")
     return "\n".join(L)
 
 
