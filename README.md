@@ -1,6 +1,6 @@
 # 中文教材编写 Skills
 
-![version](https://img.shields.io/badge/version-1.2.1-blue)
+![version](https://img.shields.io/badge/version-1.3.0-blue)
 
 ![skills](https://img.shields.io/badge/skills-9-green)
 
@@ -12,7 +12,7 @@
 
 ![deps](https://img.shields.io/badge/校验脚本-零依赖-success)
 
-面向**管理科学与工程**学科（本科高年级 / MBA）的中文教材编写流水线。9 个 skill 把「拆样本 → 课标映射 → 大纲 → 正文 → 练习/素材 → 审校 → 排版」固化成一条可执行、可检查的流程：每一步都有确定的输入、确定的产物，以及一个能跑出结论的自检脚本。
+面向**管理科学与工程**学科（本科高年级 / MBA）的中文教材编写流水线。10 个 skill 把「拆样本 → 课标映射 → 大纲 → 正文 → 练习/素材 → 审校 → 润色 → 排版」固化成一条可执行、可检查的流程：每一步都有确定的输入、确定的产物，以及一个能跑出结论的自检脚本。
 
 写教材真正的麻烦不是「写不出来」，而是**写出来的东西不像一本教材**：篇幅凭感觉、练习和正文对不上、审校靠通读一遍说「感觉还行」。这套 skill 的做法是把这些判断变成可核对的事实——字数按区间卡、每题必须挂学习目标、审校先跑脚本再过人眼。
 
@@ -38,7 +38,7 @@
 
 ---
 
-## 二、九个 skill
+## 二、十个 skill
 
 流水线的形状是固定的，上游产物是文件，下游直接读这个文件——**不要在对话里传结论**。整条链能中断、能重跑、能交给别人接着做，靠的就是这个约定。
 
@@ -51,9 +51,12 @@
         ├─ 4 正文 ──────── unit-writer          大纲 + 节标识 → 六栏稿件 (.md)
         ├─ 5 练习 ──────── exercise-designer    稿件 + LO → 分层习题 (.md)
         ├─ 6 素材 ──────── material-creator     案例方向 → 情境数据 (.md)
-        ├─ 7 审校 ──────── textbook-reviewer    稿件 → 审校报告 (.md)
-        └─ 8 排版 ──────── textbook-formatter   通过稿 → .docx
+        ├─ 7 审校 ──────── textbook-reviewer    稿件 → 审校报告 (.md)，只判不改
+        ├─ 8 润色 ──────── textbook-polish      稿件 + 审校清单 → 改写稿 + 修改说明
+        └─ 9 排版 ──────── textbook-formatter   通过稿 → .docx
 ```
+
+> 第 7 环与第 8 环是**判与改**的分工：审校明文不改稿，润色明文不改结构。两者都引用同一份 `规范库/语言风格.md`，但一个给分数、一个给行号——所以先审后润，润完只重跑语言检查，不重跑五维评分。
 
 ### 0 `textbook-builder` — 判断你在第几步
 
@@ -126,13 +129,13 @@ Agent Skills 的约定是「一个 skill 一个目录，目录里必须有 `SKIL
 | Codex       | 建议用项目级                 | `.agents/skills/`                                            |
 | WorkBuddy   | `~/.workbuddy/skills/` | `.workbuddy/skills/`                                         |
 
-**推荐做法：只留一份真身，其余用链接。** 这套东西最大的维护坑是「规则副本不同步」——9 个 skill 各自带着 `references/` 副本，多装几份就等于多几个漂移点。
+**推荐做法：只留一份真身，其余用链接。** 这套东西最大的维护坑是「规则副本不同步」——10 个 skill 各自带着 `references/` 副本，多装几份就等于多几个漂移点。
 
 ```bash
 # 取一份真身
 git clone https://github.com/hcming2026/textbook-writing-skills.git ~/src/textbook-skills
 
-# 建个人级目录，把 9 个 skill 逐个链过去（macOS / Linux）
+# 建个人级目录，把 10 个 skill 逐个链过去（macOS / Linux）
 mkdir -p ~/.claude/skills
 for d in ~/src/textbook-skills/skills/*/; do ln -sfn "$d" ~/.claude/skills/; done
 ```
@@ -326,7 +329,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 
 ```
 .
-├── skills/                  9 个 skill（45 文件）
+├── skills/                  10 个 skill（56 文件）
 │   └── <skill>/
 │       ├── SKILL.md         触发描述 + 执行步骤（渐进加载的第一层）
 │       ├── references/      该 skill 用到的规则副本
@@ -346,7 +349,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 ├── tools/
 │   ├── trigger_test.py       触发回归工具
 │   └── consistency_check.py  九份 skill 与规范库的一致性检查
-├── dist/                     交付包 zip（当前 v1.2.1，旧版在 archive/）
+├── dist/                     交付包 zip（当前 v1.3.0，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
@@ -378,13 +381,14 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 ### 版本历史
 
-八个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
+九个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
 
-**除 v1.2.1 外都是历史版本。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次（328,835 → 331,379 字节不等），`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。**请用 v1.2.1。**
+**除 v1.3.0 外都是历史版本。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次，`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。v1.2.1 之后新增第 10 个 skill 与范式层，是 v1.3.0。**请用 v1.3.0。**
 
 | 版本 | 这一版做了什么 | 规则数 | 附件 |
 |---|---|---|---|
-| **v1.2.1** | 无规则变更。把 v1.2.0 下反复重打的包定死成一个确定产物 | 68 | 79 文件，大小见 Release 页 |
+| **v1.3.0** | 新增 `textbook-polish`（教材语言润色）；引入范式层（单元制/章节制）；修 TY-18 口径与超长句漏报 | 68 | 89 文件，大小见 Release 页 |
+| v1.2.1 | 无规则变更。把 v1.2.0 下反复重打的包定死成一个确定产物 | 68 | 79 文件，333,864 B |
 | v1.2.0 | 修九份 `SKILL.md` 之间「该一致却没一致」的地方；新增一致性守门与可复现打包 | 68 | 79 文件，331,379 B |
 | v1.1.7 | 版式改用像素实测（版心 133.6 mm、36 字/行、10.5 pt），替换此前目测的参数 | 68 | 297,596 B |
 | v1.1.6 | 从技法上到判据：**YY-28**「拿掉这一段，读者会失去什么判断能力？」 | 68 | 281,437 B |
@@ -395,7 +399,7 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 > v1.1.3 的附件是**重制包**（70 文件）。原始归档包 71 文件，其中一个 `docs/盲评包/_映射-密封勿发.md` 是盲评 A/B 组的实验/对照对应表，文件首行自述「不得发给评审教师」，打包时误入。重制时只剔除该文件，其余 70 项逐字节未变。详见该版本的 Release 说明。
 >
-> **表里只有 v1.2.1 那行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以只有**当前版**留白，请以 Release 页为准。v1.2.0 那一格是发 v1.2.1 时才补上的（331,379 B），它定格之前的 7 次重打没有意义，定格之后才有对照价值。
+> **表里只有 v1.3.0 那行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以只有**当前版**留白，请以 Release 页为准。上一版定格时就补上了它的字节数（333,864 B）——同一格子，写于当时是自指循环，写于之后是有效记录。
 
 
 ---
@@ -446,3 +450,4 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 | `docs/阶段2c-高质量教材写作范式.md` | 四章通读：章节结构、候选排布，以及第 2/3/8 章推翻的三条旧判断（TY-07 并列→接力、TY-06 四段式降级、TY-19 文献排序） |
 | `docs/阶段2e-高质量教材的真谛.md` | 判据「拿掉这一段读者会失去什么」与六处页级证据 |
 | `docs/阶段2f-排版图表与文字风格实测.md` | 300 dpi 像素测量的版式参数 |
+| `docs/阶段2g-范式适配评估与方案.md` | 单元制 vs 章节制实测：栏目落点、参数取值、四处空白与六项优化 |
