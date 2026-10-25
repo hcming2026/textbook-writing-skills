@@ -262,6 +262,33 @@ def check_script_copies():
                 + "、".join(drift) + "；用 cp 从主份重新同步")
 
 
+# ---------- 检查 9：路由 skill 的环节表必须覆盖全部 skill ----------
+# 加这条的原因是一次真实事故：v1.3.0 新增 textbook-polish，README 链条图加上了，
+# 但 textbook-builder 的判定表没加——它的表固定 0–8 九步，还写着「不得自行发明
+# 新环节（第 9、10 步）」。结果是第 10 个 skill 存在却永远路由不到，
+# 用户在项目里问「下一步做什么」时会被引到排版，跳掉润色。
+# 新增 skill 时最容易漏的就是这张表，故单列一项。
+ROUTER_SKILL = "textbook-builder"
+
+
+def check_router_coverage():
+    p = os.path.join(SKILLS_DIR, ROUTER_SKILL, "SKILL.md")
+    if not os.path.exists(p):
+        warn("ROUTER", f"未找到 {ROUTER_SKILL}/SKILL.md，跳过路由覆盖校验")
+        return
+    text = read(p)
+    all_skills = set(skill_names())
+    listed = set(re.findall(r"`([a-z][a-z0-9-]+)`", text)) & all_skills
+    missing = all_skills - {ROUTER_SKILL} - listed
+    if missing:
+        err("ROUTER", f"{ROUTER_SKILL} 的环节表未覆盖：{'、'.join(sorted(missing))}"
+                      f"——新 skill 不进判定表就永远路由不到")
+    # 反向：表里出现但目录里没有的，已在 check 1/2 覆盖；这里只提示
+    stale = listed - set(skill_names())
+    if stale:
+        err("ROUTER", f"{ROUTER_SKILL} 引用了不存在的 skill：{'、'.join(sorted(stale))}")
+
+
 def main():
     quiet = "--quiet" in sys.argv
     check_reference_copies()
@@ -272,6 +299,7 @@ def main():
     check_description_boundary()
     check_rule_ids()
     check_script_copies()
+    check_router_coverage()
 
     if not quiet:
         for code, msg in errors:
