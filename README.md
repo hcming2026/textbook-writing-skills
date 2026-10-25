@@ -344,12 +344,12 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 │   ├── 阶段2f-排版图表与文字风格实测.md  像素级版式测量
 │   ├── 阶段5-测试与评估报告.md
 │   ├── 阶段6-发布检查清单.md
-│   ├── 测试用例/             T-03 ~ T-06 与两份对照组
+│   ├── 测试用例/             T-03 ~ T-07 与两份对照组
 │   └── 盲评包/               A/B 文件 + 评分表 + 密封映射表
 ├── tools/
 │   ├── trigger_test.py       触发回归工具
-│   └── consistency_check.py  九份 skill 与规范库的一致性检查
-├── dist/                     交付包 zip（当前 v1.3.0，旧版在 archive/）
+│   └── consistency_check.py  十个 skill 与规范库的一致性检查
+├── dist/                     交付包 zip（当前 v1.4.0，旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
@@ -374,21 +374,22 @@ cp 规范库/体例规范.md 规范库/学段适配.md skills/outline-designer/r
 cp 规范库/体例规范.md 规范库/语言风格.md 规范库/学段适配.md 规范库/练习设计.md skills/unit-writer/references/
 cp 规范库/体例规范.md 规范库/学段适配.md skills/textbook-formatter/references/
 cp skills/unit-writer/scripts/check_draft.py skills/textbook-reviewer/scripts/
+cp skills/unit-writer/scripts/lang_rules.py skills/textbook-reviewer/scripts/ skills/textbook-formatter/scripts/ skills/textbook-polish/scripts/
 cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 ```
 
-> `check_draft.py` 与 `check_outline.py` 各有多份副本，**必须同源**。副本不同步的典型症状：同一稿件在 `unit-writer` 下 0 ERROR，在 `textbook-reviewer` 下报一堆错。
+> `check_draft.py`（3 份）、`lang_rules.py`（4 份）、`check_outline.py`（2 份）**必须同源**。副本不同步的典型症状：同一稿件在 `unit-writer` 下 0 ERROR，在 `textbook-reviewer` 下报一堆错。`consistency_check.py` 的 `check_script_copies()` 会按下表数量核对 md5，多一份少一份都报 ERROR。
 
 ### 版本历史
 
-九个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
+十个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
 
-**已发布的版本里请用 v1.3.0。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次，`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。v1.2.1 之后新增第 10 个 skill 与范式层，是 v1.3.0。v1.4.0 增加了 6 条语病规则，**仓库已更新但尚未打包发布**——想用新规则，先从仓库取，不要等 zip。
+**已发布的版本里请用 v1.4.0。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次，`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。v1.2.1 之后新增第 10 个 skill 与范式层，是 v1.3.0。v1.4.0 把病句与逻辑不通纳入审校：6 条新规则 + 一个 7 类全检出的共享模块。
 
 | 版本 | 这一版做了什么 | 规则数 | 附件 |
 |---|---|---|---|
-| **v1.4.0**（仓库已就绪，待打包） | 新增 `语言风格.md` §十一「句子成立性」：YY-31 句法主干／YY-32 指代／YY-33 因果／YY-34 推论边界／YY-35 语域／YY-36 数量与量级；检测能力落地为 `lang_rules.py`（A 级可判／B 级待核）；审校标准接入评分与门槛；修 `改稿动作.md` 六处悬空规则引用；新增规则编号与脚本副本两项守门 | 74 | 94 文件，待打包 |
-| v1.3.0 | 新增 `textbook-polish`（教材语言润色）；引入范式层（单元制/章节制）；修 TY-18 口径与超长句漏报 | 68 | 89 文件，大小见 Release 页 |
+| **v1.4.0**（当前版） | 新增 `语言风格.md` §十一「句子成立性」：YY-31 句法主干／YY-32 指代／YY-33 因果／YY-34 推论边界／YY-35 语域／YY-36 数量与量级；检测能力落地为 `lang_rules.py`（A 级可判／B 级待核）；审校标准接入评分与门槛；修 `改稿动作.md` 六处悬空规则引用；新增规则编号与脚本副本两项守门 | 74 | 94 文件，大小见 Release 页 |
+| v1.3.0 | 新增 `textbook-polish`（教材语言润色）；引入范式层（单元制/章节制）；修 TY-18 口径与超长句漏报 | 68 | 89 文件，423,183 B |
 | v1.2.1 | 无规则变更。把 v1.2.0 下反复重打的包定死成一个确定产物 | 68 | 79 文件，333,864 B |
 | v1.2.0 | 修九份 `SKILL.md` 之间「该一致却没一致」的地方；新增一致性守门与可复现打包 | 68 | 79 文件，331,379 B |
 | v1.1.7 | 版式改用像素实测（版心 133.6 mm、36 字/行、10.5 pt），替换此前目测的参数 | 68 | 297,596 B |
@@ -400,7 +401,7 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 > v1.1.3 的附件是**重制包**（70 文件）。原始归档包 71 文件，其中一个 `docs/盲评包/_映射-密封勿发.md` 是盲评 A/B 组的实验/对照对应表，文件首行自述「不得发给评审教师」，打包时误入。重制时只剔除该文件，其余 70 项逐字节未变。详见该版本的 Release 说明。
 >
-> **表里只有 v1.3.0 那行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以只有**当前版**留白，请以 Release 页为准。上一版定格时就补上了它的字节数（333,864 B）——同一格子，写于当时是自指循环，写于之后是有效记录。
+> **表里只有 v1.4.0 那行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以只有**当前版**留白，请以 Release 页为准。上一版定格时就补上了它的字节数（v1.2.1 是 333,864 B，v1.3.0 是 423,183 B）——同一格子，写于当时是自指循环，写于之后是有效记录。
 
 
 ---
