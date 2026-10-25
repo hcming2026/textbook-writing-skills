@@ -188,6 +188,46 @@ def check_description_boundary():
             warn("DESC", f"{sk} 的 description 长度 {len(desc)} 字，过长会稀释触发词权重")
 
 
+# ---------- 检查 7：引用的规则编号必须在母本里真实存在 ----------
+# 加这条的原因是一次真实事故：v1.3.0 的 textbook-polish/references/改稿动作.md
+# 把「搭配不当／成分残缺／指代不明」指到 YY-12／13／14，而母本那三条分别是
+# 「案例虚构化」「MBA 案例须含信息不对称」「案例数据自洽」——六处引用全部悬空。
+# 编号写对了格式、指向了别的内容，比写错格式更难发现：肉眼看着像有依据，
+# 实际上等于自造判据。前六项检查都发现不了，故单列一项。
+RULE_ID = re.compile(r"\b((?:TY|YY|XD|LX)-\d{2}|SJ-X\d)\b")
+
+# 这些文件里允许出现母本之外的编号：测试用例是故意写错的样本稿
+RULE_REF_SKIP = ("测试用例",)
+
+
+def check_rule_ids():
+    master = set()
+    if not os.path.isdir(RULES_DIR):
+        warn("RULE-ID", "未找到 规范库/，跳过编号校验")
+        return
+    for name in os.listdir(RULES_DIR):
+        if name.endswith(".md"):
+            master |= set(RULE_ID.findall(read(os.path.join(RULES_DIR, name))))
+    if not master:
+        warn("RULE-ID", "规范库/ 内未解析到任何规则编号")
+        return
+
+    targets = []
+    for root, _dirs, files in os.walk(SKILLS_DIR):
+        if any(s in root for s in RULE_REF_SKIP):
+            continue
+        for f in files:
+            if f.endswith((".md", ".py")):
+                targets.append(os.path.join(root, f))
+
+    for p in targets:
+        text = read(p)
+        for rid in sorted(set(RULE_ID.findall(text))):
+            if rid not in master:
+                rel = os.path.relpath(p, ROOT).replace("\\", "/")
+                err("RULE-ID", f"{rel} 引用 {rid}，但母本里没有这条编号")
+
+
 def main():
     quiet = "--quiet" in sys.argv
     check_reference_copies()
@@ -196,6 +236,7 @@ def main():
     check_sections()
     check_step_numbers()
     check_description_boundary()
+    check_rule_ids()
 
     if not quiet:
         for code, msg in errors:
