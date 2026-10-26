@@ -4,7 +4,7 @@
 
 ![skills](https://img.shields.io/badge/skills-9-green)
 
-![rules](https://img.shields.io/badge/规范库-74%20条-orange)
+![rules](https://img.shields.io/badge/规范库-77%20条-orange)
 
 ![scope](https://img.shields.io/badge/学科-管理科学与工程-lightgrey)
 
@@ -18,7 +18,7 @@
 
 **不绑定某一个客户端。** 内容就是 Markdown 规则 + 纯 Python 脚本：遵循 [Agent Skills](https://skill.md) 开放标准的客户端（Claude Code、Cursor、Codex、WorkBuddy 等）可直接加载；不支持的客户端也能用——把仓库放进项目、在 `AGENTS.md` 里指个路即可；**完全不用 AI 也能跑**，四个校验脚本是零依赖的命令行工具。
 
-**规则不是拍脑袋定的，但要分清两种依据。** 74 条里，第八至十节那类「写作范式」规则能追到参考教材的具体页码——它们是从样本里**总结**出来的，只证明「好教材这么写」，不证明「不这么写就错」。第十一节 6 条语病规则（`YY-31`…`YY-36`）性质不同：来自汉语语法通则与 GB/T 15835，是**规范**而非抽样，所以判据更硬，审校时须逐处报出并给改法，不允许只写「句子不通」。版式参数则是用 300 dpi 渲染逐像素量出来的（版心 133.6 mm、每行 36 字、行距 1.65 倍），不是照抄 Word 默认值。拆解过程完整记在 `docs/` 里，**包括被推翻的判断和一处延续了四个版本的事实错误**——留错账是为了让后来的人看得出哪条规则改过、为什么改。
+**规则不是拍脑袋定的，但要分清两种依据。** 77 条里，第八至十节那类「写作范式」规则能追到参考教材的具体页码——它们是从样本里**总结**出来的，只证明「好教材这么写」，不证明「不这么写就错」。第十一节 9 条语病与逻辑规则（`YY-31`…`YY-39`）性质不同：来自汉语语法通则与 GB/T 15835，是**规范**而非抽样，所以判据更硬，审校时须逐处报出并给改法，不允许只写「句子不通」。版式参数则是用 300 dpi 渲染逐像素量出来的（版心 133.6 mm、每行 36 字、行距 1.65 倍），不是照抄 Word 默认值。拆解过程完整记在 `docs/` 里，**包括被推翻的判断和一处延续了四个版本的事实错误**——留错账是为了让后来的人看得出哪条规则改过、为什么改。
 
 > ⚠️ **使用前请读第八节。** 本项目的规范库未经学科专家签字，人工盲评经项目负责人决定豁免。产出只能作内部起草，不得对外称「已审定教材」。
 
@@ -161,7 +161,7 @@ cp -r skills/* <目标目录>/
 
 ```markdown
 教材编写按 skills/textbook-builder/SKILL.md 的流程走。
-各环节规则见 规范库/（74 条，TY/YY/XD/LX/SJ 编号）。
+各环节规则见 规范库/（77 条，TY/YY/XD/LX/SJ 编号）。
 正文写完必须跑 skills/unit-writer/scripts/check_draft.py，有 ERROR 不得交付。
 ```
 
@@ -188,7 +188,7 @@ python skills/curriculum-mapper/scripts/check_lo.py LO表.csv
 python skills/exercise-designer/scripts/check_exercise.py 习题.md --level=MBA
 ```
 
-唯一有外部依赖的是 `textbook-analyzer/scripts/render_pages.py`（扫版 PDF 需要 `pip install pymupdf` 才能渲染）。规则本身也是可读的：`规范库/` 里 74 条就是给人看的，不装任何工具、不看任何代码，照着写也行。
+唯一有外部依赖的是 `textbook-analyzer/scripts/render_pages.py`（扫版 PDF 需要 `pip install pymupdf` 才能渲染）。规则本身也是可读的：`规范库/` 里 77 条就是给人看的，不装任何工具、不看任何代码，照着写也行。
 
 ---
 
@@ -271,7 +271,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 
 ## 七、规则库
 
-`规范库/` 是规则母本，共 **74 条**，用编号前缀区分来源：
+`规范库/` 是规则母本，共 **77 条**，用编号前缀区分来源：
 
 | 文件        | 编号                | 条数 | 管什么                                       |
 | --------- | ----------------- | -- | ----------------------------------------- |
@@ -312,7 +312,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 | 项目           | 状态    | 这意味着什么                      |
 | ------------ | ----- | --------------------------- |
 | 人工盲评（A/B 评分） | ⏭️ 豁免 | 「用了 skill 是否更好」**没有对照评分证据** |
-| 规范库 5 份专家签字  | ⏭️ 豁免 | 「74 条规则是否正确」**只有编写者自证**     |
+| 规范库 5 份专家签字  | ⏭️ 豁免 | 「77 条规则是否正确」**只有编写者自证**     |
 
 **豁免不等于通过。** 这两项是 SOP 要求的人工闸门，经项目负责人决定跳过。后果必须由使用者承担：
 
@@ -329,13 +329,13 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 
 ```
 .
-├── skills/                  10 个 skill（60 文件）
+├── skills/                  10 个 skill（61 文件）
 │   └── <skill>/
 │       ├── SKILL.md         触发描述 + 执行步骤（渐进加载的第一层）
 │       ├── references/      该 skill 用到的规则副本
 │       ├── scripts/         自检脚本
 │       └── assets/          模板与范文（含排版映射表 v2）
-├── 规范库/                   5 份规则母本（74 条）
+├── 规范库/                   5 份规则母本（77 条）
 ├── docs/
 │   ├── 阶段2-样本拆解报告.md        九维拆解方法
 │   ├── 阶段2b-写作风格专项拆解.md   句式、人称、推进方式
@@ -349,7 +349,7 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 ├── tools/
 │   ├── trigger_test.py       触发回归工具
 │   └── consistency_check.py  十个 skill 与规范库的一致性检查
-├── dist/                     交付包 zip（当前 v1.4.0，旧版在 archive/）
+├── dist/                     交付包 zip（旧版在 archive/）
 ├── 需求说明书.md             阶段 1 产出：范围、边界、验收标准
 ├── CHANGELOG.md              版本记录与已知问题
 └── README.md
@@ -372,6 +372,8 @@ $ python skills/unit-writer/scripts/check_draft.py skills/unit-writer/assets/范
 cp 规范库/*.md skills/textbook-reviewer/references/
 cp 规范库/体例规范.md 规范库/学段适配.md skills/outline-designer/references/ skills/textbook-builder/references/
 cp 规范库/体例规范.md 规范库/语言风格.md 规范库/学段适配.md 规范库/练习设计.md skills/unit-writer/references/
+cp 规范库/语言风格.md skills/material-creator/references/
+cp 规范库/审校标准.md skills/textbook-polish/references/
 cp 规范库/体例规范.md 规范库/学段适配.md skills/textbook-formatter/references/
 cp skills/unit-writer/scripts/check_draft.py skills/textbook-reviewer/scripts/
 cp skills/unit-writer/scripts/lang_rules.py skills/textbook-reviewer/scripts/ skills/textbook-formatter/scripts/ skills/textbook-polish/scripts/
@@ -382,13 +384,16 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 ### 版本历史
 
-十个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。
+十一个版本都有 Release 和对应 zip，全部可从 [Releases](https://github.com/hcming2026/textbook-writing-skills/releases) 下载。**要装就用 Releases 页里 tag 最大的那个**——本表只记改了什么，不记发没发。
 
-**已发布的版本里请用 v1.4.0。** v1.1.3–v1.1.7 都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次，`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。v1.2.1 之后新增第 10 个 skill 与范式层，是 v1.3.0。v1.4.0 把病句与逻辑不通纳入审校：6 条新规则 + 一个 7 类全检出的共享模块。
+> **为什么表里不写「当前版 / 待打包 / 未发布」这类状态词。** 本 README 就在交付包里，状态词写进去必然自相矛盾：包做好了，「待打包」就是假的；包一改，「已发布」又可能过期。v1.4.0 发布时就踩过一次——包名叫 v1.4.0，包里却写着「尚未打包发布」，只好删附件重传。现在状态一律不进文件，由 Releases 页回答。
+
+**不要用 v1.1.3–v1.1.7。** 它们都早于 v1.2.0 的三项 P0 修复——脚本命令依赖当前目录（装完直接报 `No such file or directory`）、八份 `description` 缺边界声明（路由会错）、审校标准母本比副本旧一级。v1.2.0 本身没有功能缺口，但同一版本号下重打过 7 次，`v1.2.0` 已无法指认一个确定产物，故用 v1.2.1 定格。
 
 | 版本 | 这一版做了什么 | 规则数 | 附件 |
 |---|---|---|---|
-| **v1.4.0**（当前版） | 新增 `语言风格.md` §十一「句子成立性」：YY-31 句法主干／YY-32 指代／YY-33 因果／YY-34 推论边界／YY-35 语域／YY-36 数量与量级；检测能力落地为 `lang_rules.py`（A 级可判／B 级待核）；审校标准接入评分与门槛；修 `改稿动作.md` 六处悬空规则引用；新增规则编号与脚本副本两项守门 | 74 | 94 文件，大小见 Release 页 |
+| **v1.5.0** | 把外部单文件 skill `mba-textbook-polishing` 按本系列架构重写并入 `textbook-polish`：新增 YY-37 并列同层／YY-38 关联词核准／YY-39 否定与矛盾（三条全是 B 级，不落脚本）；补「精简与去欧化」一节（无规则号，附 C-02 反证）；输出由三件扩为五件（+术语表 +待确认）；流程加第 7 步「衔接与去重复」；修两处指错内容的规则引用 | 77 | 95 文件，大小见 Release 页 |
+| v1.4.0 | 新增 `语言风格.md` §十一「句子成立性」：YY-31 句法主干／YY-32 指代／YY-33 因果／YY-34 推论边界／YY-35 语域／YY-36 数量与量级；检测能力落地为 `lang_rules.py`（A 级可判／B 级待核）；审校标准接入评分与门槛；修 `改稿动作.md` 六处悬空规则引用；新增规则编号与脚本副本两项守门 | 74 | 94 文件，485,687 B |
 | v1.3.0 | 新增 `textbook-polish`（教材语言润色）；引入范式层（单元制/章节制）；修 TY-18 口径与超长句漏报 | 68 | 89 文件，423,183 B |
 | v1.2.1 | 无规则变更。把 v1.2.0 下反复重打的包定死成一个确定产物 | 68 | 79 文件，333,864 B |
 | v1.2.0 | 修九份 `SKILL.md` 之间「该一致却没一致」的地方；新增一致性守门与可复现打包 | 68 | 79 文件，331,379 B |
@@ -401,7 +406,7 @@ cp skills/outline-designer/scripts/check_outline.py skills/unit-writer/scripts/
 
 > v1.1.3 的附件是**重制包**（70 文件）。原始归档包 71 文件，其中一个 `docs/盲评包/_映射-密封勿发.md` 是盲评 A/B 组的实验/对照对应表，文件首行自述「不得发给评审教师」，打包时误入。重制时只剔除该文件，其余 70 项逐字节未变。详见该版本的 Release 说明。
 >
-> **表里只有 v1.4.0 那行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以只有**当前版**留白，请以 Release 页为准。上一版定格时就补上了它的字节数（v1.2.1 是 333,864 B，v1.3.0 是 423,183 B）——同一格子，写于当时是自指循环，写于之后是有效记录。
+> **表里只有最新一行不写字节数，其余全写**：本 README 就在交付包里，写死自己所属包的大小会形成自指循环——改一个字包就变，包一变大小就不对。所以最新一行留白，请以 Release 页为准。上一版定格时就补上它的字节数（v1.2.1 是 333,864 B，v1.3.0 是 423,183 B，v1.4.0 是 485,687 B）——同一格子，写于当时是自指循环，写于之后是有效记录。
 
 
 ---
