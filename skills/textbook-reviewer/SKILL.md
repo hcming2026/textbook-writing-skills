@@ -13,7 +13,7 @@ description: 按本系列规范库审校中文教材（管理科学与工程·�
 - 一批稿件要做交付前体检。
 - 争议稿件需要一份可复核的书面意见（谁的判断、依据哪条规则、在哪一行）。
 
-不适用：语言层面的改稿（→ `textbook-polish`）、内容与结构层面的重写（→ `unit-writer`）、大纲合规检查（→ `outline-designer` 的 `check_outline.py`）、排版（→ `textbook-formatter`）。
+不适用：语言层面的改稿（→ `textbook-polish` A 档）、内容与结构层面的重写（→ `unit-writer`；若是一整本书规模的重写，→ `textbook-polish` B 档整书修订）、大纲合规检查（→ `outline-designer` 的 `check_outline.py`）、排版（→ `textbook-formatter`）。
 
 ## 输入要求
 
